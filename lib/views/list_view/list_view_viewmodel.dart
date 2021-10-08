@@ -177,8 +177,8 @@ class ListViewViewModel extends BaseViewModel {
   }
 
   // onButtonTap({
-  //   @required String key,
-  //   @required String value,
+  //   required String key,
+  //   required String value,
   // }) {
   //   filters[key] = value;
   //   pagewiseLoadController.reset();

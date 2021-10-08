@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/palette.dart';
+import 'package:frappe_app/form/controls/base_control.dart';
+import 'package:frappe_app/form/controls/base_input.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/doctype_response.dart';
+import 'package:frappe_app/model/offline_storage.dart';
+import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/widgets/form_builder_typeahead.dart';
-import 'package:provider/provider.dart';
-
-import '../../model/doctype_response.dart';
-import '../../app/locator.dart';
-import '../../services/api/api.dart';
-
-import '../../utils/helpers.dart';
-import '../../model/offline_storage.dart';
-import '../../utils/enums.dart';
-
-import 'base_control.dart';
-import 'base_input.dart';
 
 class LinkField extends StatefulWidget {
   final DoctypeField doctypeField;

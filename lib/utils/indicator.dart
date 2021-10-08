@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/palette.dart';
 
@@ -12,9 +10,8 @@ class Indicator {
       }
     };
 
-    if (doctypeColor[doctype] != null &&
-        doctypeColor[doctype][status] != null) {
-      return doctypeColor[doctype][status];
+    if (doctypeColor[doctype]?[status] != null) {
+      return doctypeColor[doctype]![status]!;
     } else if (["Pending", "Review", "Medium", "Not Approved"]
         .contains(status)) {
       return indicateWarning(status);
@@ -56,7 +53,7 @@ class Indicator {
           ),
           child: Center(
             child: Text(
-              title ?? "",
+              title,
               style: TextStyle(
                 color: color['txtColor'],
                 fontSize: 12,

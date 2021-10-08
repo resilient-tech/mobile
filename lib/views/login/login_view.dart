@@ -2,25 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:frappe_app/config/frappe_palette.dart';
+import 'package:frappe_app/config/palette.dart';
 import 'package:frappe_app/form/controls/control.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/http.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
+import 'package:frappe_app/views/base_view.dart';
 import 'package:frappe_app/views/home_view.dart';
+import 'package:frappe_app/views/login/login_viewmodel.dart';
 import 'package:frappe_app/widgets/frappe_bottom_sheet.dart';
-
-import 'login_viewmodel.dart';
-
-import '../../config/palette.dart';
-import '../../widgets/frappe_button.dart';
-
-import '../../views/base_view.dart';
-
-import '../../utils/frappe_alert.dart';
-import '../../utils/enums.dart';
+import 'package:frappe_app/widgets/frappe_button.dart';
+import 'package:frappe_app/widgets/frappe_logo.dart';
+import 'package:frappe_app/widgets/password_field.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -33,25 +30,17 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return BaseView<LoginViewModel>(
-      onModelReady: (model) {
-        model.init();
-      },
+      onModelReady: (model) => model.init(),
       builder: (context, model, child) => Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(
-                height: 60,
-              ),
+              SizedBox(height: 60),
               FrappeLogo(),
-              SizedBox(
-                height: 24,
-              ),
-              Title(),
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
+              _buildTitle(),
+              SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -177,6 +166,16 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+  Widget _buildTitle() {
+    return Text(
+      'Login to Frappe',
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
 }
 
 class VerificationBottomSheetView extends StatefulWidget {
@@ -288,82 +287,6 @@ class _VerificationBottomSheetViewState
           ),
         ),
       ),
-    );
-  }
-}
-
-class Title extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Login to Frappe',
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-}
-
-class FrappeLogo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Image(
-      image: AssetImage('assets/frappe_icon.jpg'),
-      width: 60,
-      height: 60,
-    );
-  }
-}
-
-class PasswordField extends StatefulWidget {
-  @override
-  _PasswordFieldState createState() => _PasswordFieldState();
-}
-
-class _PasswordFieldState extends State<PasswordField> {
-  bool _hidePassword = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return buildDecoratedControl(
-      control: Stack(
-        alignment: Alignment.centerRight,
-        children: [
-          FormBuilderTextField(
-            maxLines: 1,
-            name: 'pwd',
-            validator: FormBuilderValidators.compose([
-              FormBuilderValidators.required(context),
-            ]),
-            obscureText: _hidePassword,
-            decoration: Palette.formFieldDecoration(
-              label: "Password",
-            ),
-          ),
-          TextButton(
-            style: ButtonStyle(
-              overlayColor: MaterialStateProperty.all(
-                Colors.transparent,
-              ),
-            ),
-            child: Text(
-              _hidePassword ? "Show" : "Hide",
-              style: TextStyle(
-                color: FrappePalette.grey[600],
-              ),
-            ),
-            onPressed: () {
-              setState(
-                () {
-                  _hidePassword = !_hidePassword;
-                },
-              );
-            },
-          )
-        ],
-      ),
-      field: DoctypeField(fieldname: "password", label: "Password"),
     );
   }
 }

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/config/frappe_palette.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/awesome_bar/awesome_bar_viewmodel.dart';
+import 'package:frappe_app/views/base_view.dart';
 import 'package:frappe_app/widgets/card_list_tile.dart';
-
-import '../../utils/frappe_icon.dart';
-
-import '../../config/frappe_icons.dart';
-
-import '../base_view.dart';
 
 class Awesombar extends StatelessWidget {
   @override
@@ -22,7 +19,7 @@ class Awesombar extends StatelessWidget {
       builder: (context, model, child) {
         if (model.error != null) {
           return handleError(
-            error: model.error,
+            error: model.error!,
             context: context,
             onRetry: () {
               model.refresh();
@@ -148,7 +145,7 @@ class Awesombar extends StatelessWidget {
                 Flexible(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, bottom: 8),
-                    child: FlatButton(
+                    child: TextButton(
                       child: Text(
                         'Cancel',
                         style: TextStyle(
@@ -156,8 +153,10 @@ class Awesombar extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      padding: EdgeInsets.zero,
-                      minWidth: 70,
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all(Size(70, 0)),
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
                       onPressed: () {
                         FocusScope.of(context).requestFocus(FocusNode());
                       },

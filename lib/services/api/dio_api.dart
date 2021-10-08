@@ -1,26 +1,20 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/desk_sidebar_items_response.dart';
+import 'package:frappe_app/model/desktop_page_response.dart';
+import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/login_response.dart';
+import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/model/upload_file_response.dart';
-
-import '../../model/doctype_response.dart';
-import '../../model/desktop_page_response.dart';
-import '../../model/desk_sidebar_items_response.dart';
-import '../../model/login_response.dart';
-
-import '../../services/api/api.dart';
-
-import '../../utils/helpers.dart';
-import '../../utils/dio_helper.dart';
-import '../../model/offline_storage.dart';
+import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/dio_helper.dart';
+import 'package:frappe_app/utils/helpers.dart';
 
 class DioApi implements Api {
   Future<LoginResponse> login(LoginRequest loginRequest) async {
@@ -28,14 +22,16 @@ class DioApi implements Api {
       final response = await DioHelper.dio.post(
         '/method/login',
         data: loginRequest.toJson(),
-        options: Options(validateStatus: (status) => status < 500),
+        options: Options(
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
 
       if (response.statusCode == HttpStatus.ok) {
         if (response.headers.map["set-cookie"] != null &&
-            response.headers.map["set-cookie"][3] != null) {
-          response.data["user_id"] =
-              response.headers.map["set-cookie"][3].split(';')[0].split('=')[1];
+            response.headers.map["set-cookie"]!.length >= 4) {
+          response.data["user_id"] = response.headers.map["set-cookie"]![3]
+              .split(';')[0]
+              .split('=')[1];
         }
 
         return LoginResponse.fromJson(response.data);
@@ -73,20 +69,15 @@ class DioApi implements Api {
       var response = await DioHelper.dio.post(
         '/method/frappe.desk.desktop.get_desk_sidebar_items',
         options: Options(
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
 
       if (response.statusCode == 417) {
         response = await DioHelper.dio.post(
           '/method/frappe.desk.desktop.get_wspace_sidebar_items',
           options: Options(
-            validateStatus: (status) {
-              return status < 500;
-            },
-          ),
+              validateStatus: (status) =>
+                  status != null ? status < 500 : false),
         );
         response.data["message"] = response.data["message"]["pages"];
       }
@@ -136,14 +127,9 @@ class DioApi implements Api {
     try {
       final response = await DioHelper.dio.post(
         '/method/frappe.desk.desktop.get_desktop_page',
-        data: {
-          'page': module,
-        },
+        data: {'page': module},
         options: Options(
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
 
       if (response.statusCode == 200) {
@@ -187,10 +173,7 @@ class DioApi implements Api {
         '/method/frappe.desk.form.load.getdoctype',
         queryParameters: queryParams,
         options: Options(
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
 
       if (response.statusCode == HttpStatus.ok) {
@@ -233,13 +216,13 @@ class DioApi implements Api {
   }
 
   Future<List> fetchList({
-    @required List fieldnames,
-    @required String doctype,
-    @required DoctypeDoc meta,
-    @required String orderBy,
-    List filters,
-    int pageLength,
-    int offset,
+    required List fieldnames,
+    required String doctype,
+    required DoctypeDoc meta,
+    required String orderBy,
+    List? filters,
+    int? pageLength,
+    int? offset,
   }) async {
     var queryParams = {
       'doctype': doctype,
@@ -260,10 +243,7 @@ class DioApi implements Api {
         '/method/frappe.desk.reportview.get',
         queryParameters: queryParams,
         options: Options(
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
       if (response.statusCode == HttpStatus.ok) {
         var l = response.data["message"];
@@ -339,10 +319,7 @@ class DioApi implements Api {
         '/method/frappe.desk.form.load.getdoc',
         queryParameters: queryParams,
         options: Options(
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
 
       if (response.statusCode == 200) {
@@ -396,13 +373,13 @@ class DioApi implements Api {
   }
 
   Future sendEmail({
-    @required recipients,
+    required recipients,
     cc,
     bcc,
-    @required subject,
-    @required content,
-    @required doctype,
-    @required doctypeName,
+    required subject,
+    required content,
+    required doctype,
+    required doctypeName,
     sendEmail,
     printHtml,
     sendMeACopy,
@@ -575,9 +552,9 @@ class DioApi implements Api {
   }
 
   Future<List<UploadedFile>> uploadFiles({
-    @required String doctype,
-    @required String name,
-    @required List<FrappeFile> files,
+    required String doctype,
+    required String name,
+    required List<FrappeFile> files,
   }) async {
     List<UploadedFile> uploadedFiles = [];
 
@@ -632,13 +609,13 @@ class DioApi implements Api {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null &&
-            e.response.data != null &&
-            e.response.data["_server_messages"] != null) {
-          var errorMsgs = json.decode(e.response.data["_server_messages"]);
+            e.response!.data != null &&
+            e.response!.data["_server_messages"] != null) {
+          var errorMsgs = json.decode(e.response!.data["_server_messages"]);
           var errorMsg = json.decode(errorMsgs[0])["message"];
 
           throw ErrorResponse(
-            statusCode: e.response.statusCode,
+            statusCode: e.response!.statusCode,
             statusMessage: errorMsg,
           );
         } else {
@@ -661,10 +638,10 @@ class DioApi implements Api {
   }
 
   Future<Map> searchLink({
-    String doctype,
-    String refDoctype,
-    String txt,
-    int pageLength,
+    String? doctype,
+    String? refDoctype,
+    String? txt,
+    int? pageLength,
   }) async {
     var queryParams = {
       'txt': txt,
@@ -682,11 +659,8 @@ class DioApi implements Api {
         '/method/frappe.desk.search.search_link',
         data: queryParams,
         options: Options(
-          contentType: Headers.formUrlEncodedContentType,
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
+            contentType: Headers.formUrlEncodedContentType,
+            validateStatus: (status) => status != null ? status < 500 : false),
       );
       if (response.statusCode == 200) {
         if (await OfflineStorage.storeApiResponse()) {
@@ -868,10 +842,10 @@ class DioApi implements Api {
   }
 
   Future setPermission({
-    @required String doctype,
-    @required String name,
-    @required String user,
-    @required Map shareInfo,
+    required String doctype,
+    required String name,
+    required String user,
+    required Map shareInfo,
   }) async {
     var data = {
       'doctype': doctype,
@@ -934,8 +908,8 @@ class DioApi implements Api {
   }
 
   Future shareGetUsers({
-    @required String doctype,
-    @required String name,
+    required String doctype,
+    required String name,
   }) async {
     var data = {
       "doctype": doctype,
@@ -957,9 +931,9 @@ class DioApi implements Api {
   }
 
   Future<GroupByCountResponse> getGroupByCount({
-    @required String doctype,
-    @required List currentFilters,
-    @required String field,
+    required String doctype,
+    required List currentFilters,
+    required String field,
   }) async {
     var reqData = {
       "doctype": doctype,

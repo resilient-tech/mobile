@@ -170,11 +170,7 @@ class ListItem extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  assignee != null
-                      ? CollapsedAvatars(assignee)
-                      : Container(
-                          height: 38,
-                        ),
+                  CollapsedAvatars(assignee)
                 ],
               ),
             ],

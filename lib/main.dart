@@ -1,21 +1,13 @@
-// @dart=2.9
-
-import 'dart:isolate';
 import 'dart:ui';
-
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'utils/helpers.dart';
-import 'utils/http.dart';
-
-import 'scheduler.dart';
-import 'app/locator.dart';
-import 'app.dart';
+import 'package:frappe_app/app.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/utils/http.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -33,14 +25,14 @@ void main() async {
 
   runApp(
     DevicePreview(
-      enabled: !kReleaseMode,
+      enabled: false,
       builder: (context) => FrappeApp(),
     ),
   );
 }
 
 void downloadCallback(String id, DownloadTaskStatus status, int progress) {
-  final SendPort send =
-      IsolateNameServer.lookupPortByName('downloader_send_port');
+  final send = IsolateNameServer.lookupPortByName('downloader_send_port');
+  if (send == null) return;
   send.send([id, status, progress]);
 }

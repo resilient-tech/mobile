@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/login/login_view.dart';
-import 'package:frappe_app/views/queue.dart';
 import 'package:frappe_app/widgets/padded_card_list_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 

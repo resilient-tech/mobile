@@ -75,14 +75,15 @@ class Timeline extends StatelessWidget {
         children.add(
           Padding(
             padding: const EdgeInsets.only(left: 6.0),
-            child: FlatButton.icon(
-              color: FrappePalette.grey[600],
-              shape: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.transparent,
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(6),
+            child: TextButton.icon(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(FrappePalette.grey[600]),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                  ),
                 ),
               ),
               label: Text(

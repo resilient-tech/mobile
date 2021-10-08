@@ -1,20 +1,17 @@
 import 'dart:io';
 
+import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/offline_storage.dart';
+import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/loading_indicator.dart';
+import 'package:frappe_app/views/base_viewmodel.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../app/locator.dart';
-import '../../model/doctype_response.dart';
-import '../../views/base_viewmodel.dart';
-import '../../services/api/api.dart';
-
-import '../../model/offline_storage.dart';
-import '../../model/config.dart';
-import '../../utils/enums.dart';
-import '../../utils/helpers.dart';
-import '../../model/queue.dart';
 
 @lazySingleton
 class FormViewViewModel extends BaseViewModel {

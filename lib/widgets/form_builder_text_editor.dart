@@ -8,7 +8,7 @@ import 'package:flutter_html/image_render.dart';
 import 'package:frappe_app/config/palette.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/utils/dio_helper.dart';
-import 'package:frappe_app/views/login/login_view.dart';
+import 'package:frappe_app/widgets/frappe_logo.dart';
 import 'package:html/parser.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:frappe_app/utils/enums.dart' as enums;

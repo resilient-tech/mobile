@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/config/frappe_palette.dart';
+import 'package:frappe_app/config/palette.dart';
+import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/desk_sidebar_items_response.dart';
-
+import 'package:frappe_app/model/desktop_page_response.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
+import 'package:frappe_app/views/base_view.dart';
+import 'package:frappe_app/views/desk/desk_viewmodel.dart';
+import 'package:frappe_app/widgets/header_app_bar.dart';
 import 'package:frappe_app/widgets/padded_card_list_tile.dart';
-
 import 'package:provider/provider.dart';
-
-import '../../model/desktop_page_response.dart';
-
-import '../../config/frappe_palette.dart';
-import '../../config/palette.dart';
-
-import '../../utils/enums.dart';
-
-import '../../widgets/header_app_bar.dart';
-import '../base_view.dart';
-import 'desk_viewmodel.dart';
 
 // ignore: must_be_immutable
 class DeskView extends StatelessWidget {
@@ -49,10 +44,8 @@ class DeskView extends StatelessWidget {
           );
         } else if (model.hasError) {
           return handleError(
-            onRetry: () {
-              model.getData();
-            },
-            error: model.error,
+            onRetry: model.getData,
+            error: model.error ?? ErrorResponse(),
             context: context,
           );
         } else {

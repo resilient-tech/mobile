@@ -5,10 +5,7 @@ import '../app/locator.dart';
 class Config {
   static var configContainer = locator<StorageService>().getHiveBox('config');
 
-  bool get isLoggedIn => configContainer.get(
-        'isLoggedIn',
-        defaultValue: false,
-      );
+  bool get isLoggedIn => configContainer.get('isLoggedIn', defaultValue: false);
 
   String? get userId =>
       Uri.decodeFull(configContainer.get('userId', defaultValue: ""));

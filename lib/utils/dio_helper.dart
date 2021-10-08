@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:frappe_app/model/config.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../model/config.dart';
-
 class DioHelper {
-  static Dio? dio;
+  static late Dio dio;
   static String? cookies;
 
   static Future init(String baseUrl) async {
@@ -20,8 +19,8 @@ class DioHelper {
     )..interceptors.add(
         CookieManager(cookieJar),
       );
-    dio?.options.connectTimeout = 60 * 1000;
-    dio?.options.receiveTimeout = 60 * 1000;
+    dio.options.connectTimeout = 60 * 1000;
+    dio.options.receiveTimeout = 60 * 1000;
   }
 
   static Future initCookies() async {

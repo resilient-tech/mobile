@@ -10,9 +10,9 @@ class ErrorResponse {
   ErrorResponse({
     this.stackTrace,
     this.statusCode,
-    this.statusMessage = "Something went wrong",
+    String? statusMessage,
     this.userMessage,
-  });
+  }) : this.statusMessage = statusMessage ?? "Something went wrong";
 }
 
 class FilterOperator {

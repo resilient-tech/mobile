@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/config/palette.dart';
+import 'package:frappe_app/form/controls/base_control.dart';
+import 'package:frappe_app/form/controls/base_input.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/widgets/form_builder_typeahead.dart';
-
-import '../../model/doctype_response.dart';
-
-import 'base_control.dart';
-import 'base_input.dart';
 
 typedef String SelectionToTextTransformer<T>(T selection);
 
@@ -49,7 +46,7 @@ class AutoComplete extends StatefulWidget {
 
 class _AutoCompleteState extends State<AutoComplete>
     with Control, ControlInput {
-  TextEditingController? _typeAheadController;
+  late TextEditingController _typeAheadController;
 
   @override
   void initState() {
@@ -60,18 +57,14 @@ class _AutoCompleteState extends State<AutoComplete>
   @override
   Widget build(BuildContext context) {
     List<String? Function(dynamic)> validators = [];
-
-    var f = setMandatory(widget.doctypeField);
-
+    final f = setMandatory(widget.doctypeField);
     if (f != null) {
-      validators.add(
-        f(context),
-      );
+      validators.add(f(context));
     }
 
     return Theme(
       data: Theme.of(context).copyWith(primaryColor: Colors.black),
-      child: FormBuilderTypeAhead(
+      child: FormBuilderTypeAhead<dynamic>(
         key: widget.key,
         controller: _typeAheadController,
         onSuggestionSelected: widget.onSuggestionSelected,
@@ -89,47 +82,24 @@ class _AutoCompleteState extends State<AutoComplete>
         validator: FormBuilderValidators.compose(validators),
         decoration: widget.inputDecoration ??
             Palette.formFieldDecoration(
-              suffixIcon: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  widget.suffixIcon ??
-                      FrappeIcon(
-                        FrappeIcons.select,
-                      ),
-                ],
-              ),
+              suffixIcon: widget.suffixIcon ??
+                  Center(child: FrappeIcon(FrappeIcons.select)),
             ),
-        selectionToTextTransformer: widget.selectionToTextTransformer ??
-            (item) {
-              return item.toString();
-            },
+        selectionToTextTransformer:
+            widget.selectionToTextTransformer ?? (item) => item.toString(),
         name: widget.doctypeField.fieldname,
         itemBuilder: widget.itemBuilder ??
-            (context, item) {
-              return ListTile(
-                title: Text(
-                  item.toString(),
-                ),
-              );
-            },
-        initialValue: widget.doc != null
-            ? widget.doc![widget.doctypeField.fieldname]
-            : null,
+            (context, item) => ListTile(title: Text(item.toString())),
+        initialValue: widget.doc?[widget.doctypeField.fieldname],
         suggestionsCallback: widget.suggestionsCallback ??
             (query) {
-              var lowercaseQuery = query.toLowerCase();
-              List opts;
-              if (widget.doctypeField.options is String) {
-                opts = widget.doctypeField.options.split('\n');
-              } else {
-                opts = widget.doctypeField.options ?? [];
-              }
+              final options = widget.doctypeField.options;
+              final lowercaseQuery = query.toLowerCase();
+              List opts =
+                  options is String ? options.split('\n') : options ?? [];
               return opts
                   .where(
-                    (option) => option.toLowerCase().contains(
-                          lowercaseQuery,
-                        ),
+                    (option) => option.toLowerCase().contains(lowercaseQuery),
                   )
                   .toList();
             },

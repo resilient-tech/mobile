@@ -2,16 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/palette.dart';
+import 'package:frappe_app/form/controls/base_control.dart';
+import 'package:frappe_app/form/controls/base_input.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/doctype_response.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/widgets/form_builder_chips_input.dart';
-
-import '../../model/doctype_response.dart';
-import '../../app/locator.dart';
-import '../../config/palette.dart';
-import '../../services/api/api.dart';
-
-import 'base_input.dart';
-import 'base_control.dart';
 
 class MultiSelect extends StatefulWidget {
   final DoctypeField doctypeField;
@@ -19,7 +17,7 @@ class MultiSelect extends StatefulWidget {
 
   final Map? doc;
   final FutureOr<List<dynamic>> Function(String)? findSuggestions;
-  final dynamic Function(List<dynamic>)? valueTransformer;
+  final dynamic Function(List<Object?>?)? valueTransformer;
   final Function(List<dynamic>)? onChanged;
   final Key? key;
   final Widget? prefixIcon;
@@ -47,8 +45,7 @@ class _MultiSelectState extends State<MultiSelect> with Control, ControlInput {
   Widget build(BuildContext context) {
     List<String? Function(dynamic)> validators = [];
 
-    var f = setMandatory(widget.doctypeField);
-
+    final f = setMandatory(widget.doctypeField);
     if (f != null) {
       validators.add(f(context));
     }
@@ -85,18 +82,7 @@ class _MultiSelectState extends State<MultiSelect> with Control, ControlInput {
       },
       validator: FormBuilderValidators.compose(validators),
       valueTransformer: widget.valueTransformer ??
-          (value) {
-            return value
-                .map((v) {
-                  if (v is Map) {
-                    return v["value"];
-                  } else {
-                    return v;
-                  }
-                })
-                .toList()
-                .join(',');
-          },
+          (value) => value?.map((v) => v is Map ? v["value"] : v).join(','),
       decoration: Palette.formFieldDecoration(
         label: widget.doctypeField.label,
         fillColor: widget.color,

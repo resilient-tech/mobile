@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,28 +5,24 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/main.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/offline_storage.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/services/storage_service.dart';
+import 'package:frappe_app/utils/dio_helper.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
+import 'package:frappe_app/utils/http.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/login/login_view.dart';
+import 'package:frappe_app/views/no_internet.dart';
 import 'package:frappe_app/widgets/frappe_button.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../model/config.dart';
-import '../model/doctype_response.dart';
-
-import '../services/api/api.dart';
-import '../views/no_internet.dart';
-
-import 'http.dart';
-import '../main.dart';
-import '../app/locator.dart';
-
-import '../utils/dio_helper.dart';
-import '../utils/enums.dart';
 
 getDownloadPath() async {
   // TODO
@@ -47,7 +42,8 @@ downloadFile(String fileUrl, String downloadPath) async {
 
   await FlutterDownloader.enqueue(
     headers: {
-      HttpHeaders.cookieHeader: DioHelper.cookies,
+      // Assuming DioHelper has initialized
+      HttpHeaders.cookieHeader: DioHelper.cookies!,
     },
     url: absoluteUrl,
     savedDir: downloadPath,
@@ -72,17 +68,17 @@ Future<bool> _checkPermission() async {
 String toTitleCase(String str) {
   return str
       .replaceAllMapped(
-          RegExp(
-              r'[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+'),
-          (Match m) =>
-              "${m[0][0].toUpperCase()}${m[0].substring(1).toLowerCase()}")
+        RegExp(
+          r'[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+',
+        ),
+        (Match m) =>
+            "${m[0]![0].toUpperCase()}${m[0]!.substring(1).toLowerCase()}",
+      )
       .replaceAll(RegExp(r'(_|-)+'), ' ');
 }
 
-DateTime parseDate(val) {
-  if (val == null) {
-    return null;
-  } else if (val == "Today") {
+DateTime parseDate(String val) {
+  if (val == "Today") {
     return DateTime.now();
   } else {
     return DateTime.parse(val);
@@ -100,10 +96,10 @@ List generateFieldnames(String doctype, DoctypeDoc meta) {
   ];
 
   if (hasTitle(meta)) {
-    fields.add(meta.titleField);
+    fields.add(meta.titleField!);
   }
 
-  if (meta.fieldsMap.containsKey('status')) {
+  if (meta.fieldsMap?.containsKey('status') ?? false) {
     fields.add('status');
   } else {
     fields.add('docstatus');
@@ -162,10 +158,9 @@ getTitle(DoctypeDoc meta, Map doc) {
 
 clearLoginInfo() async {
   var cookie = await DioHelper.getCookiePath();
-  if (Config().uri != null) {
-    cookie.delete(
-      Config().uri,
-    );
+  final config = Config();
+  if (config.uri != null) {
+    cookie.delete(config.uri!);
   }
 
   Config.set('isLoggedIn', false);
@@ -181,9 +176,9 @@ handle403(BuildContext context) async {
 }
 
 handleError({
-  @required ErrorResponse error,
-  @required BuildContext context,
-  Function onRetry,
+  required ErrorResponse error,
+  required BuildContext context,
+  Function? onRetry,
   bool hideAppBar = false,
 }) {
   if (error.statusCode == HttpStatus.forbidden) {
@@ -211,8 +206,8 @@ handleError({
 }
 
 Future<void> showNotification({
-  @required String title,
-  @required String subtitle,
+  required String title,
+  required String subtitle,
   int index = 0,
 }) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -241,13 +236,13 @@ Future<int> getActiveNotifications() async {
     return 0;
   }
 
-  final List<ActiveNotification> activeNotifications =
+  final List<ActiveNotification>? activeNotifications =
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.getActiveNotifications();
 
-  return activeNotifications.length;
+  return activeNotifications?.length ?? 0;
 }
 
 Map extractChangedValues(Map original, Map updated) {
@@ -276,9 +271,7 @@ Future<bool> verifyOnline() async {
 }
 
 getLinkFields(String doctype) async {
-  var docMeta = await locator<Api>().getDoctype(
-    doctype,
-  );
+  var docMeta = await locator<Api>().getDoctype(doctype);
   var doc = docMeta.docs[0];
   var linkFieldDoctypes = doc.fields
       .where((d) => d.fieldtype == 'Link')
@@ -289,15 +282,13 @@ getLinkFields(String doctype) async {
 }
 
 resetValues() async {
-  await locator<StorageService>()
-      .putSharedPrefBoolValue("backgroundTask", false);
-  await locator<StorageService>()
-      .putSharedPrefBoolValue("storeApiResponse", true);
+  final _storageService = locator<StorageService>();
+  await _storageService.putSharedPrefBoolValue("backgroundTask", false);
+  await _storageService.putSharedPrefBoolValue("storeApiResponse", true);
 }
 
 initDb() async {
   await locator<StorageService>().initHiveStorage();
-
   await locator<StorageService>().initHiveBox('queue');
   await locator<StorageService>().initHiveBox('offline');
   await locator<StorageService>().initHiveBox('config');

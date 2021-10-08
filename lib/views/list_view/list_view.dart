@@ -2,30 +2,23 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/config/frappe_palette.dart';
+import 'package:frappe_app/config/palette.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/doctype_response.dart';
+import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/base_view.dart';
 import 'package:frappe_app/views/list_view/bottom_sheets/filters_bottom_sheet_view.dart';
+import 'package:frappe_app/views/list_view/list_view_viewmodel.dart';
 import 'package:frappe_app/views/new_doc/new_doc_view.dart';
+import 'package:frappe_app/widgets/frappe_button.dart';
+import 'package:frappe_app/widgets/header_app_bar.dart';
+import 'package:frappe_app/widgets/list_item.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-import '../../model/doctype_response.dart';
-
-import '../../app/locator.dart';
-
-import '../../views/list_view/list_view_viewmodel.dart';
-
-import '../../config/palette.dart';
-import '../../config/frappe_icons.dart';
-
-import '../../utils/helpers.dart';
-import '../../utils/frappe_icon.dart';
-import '../../utils/enums.dart';
-
-import '../../widgets/header_app_bar.dart';
-import '../../widgets/frappe_button.dart';
-import '../../widgets/list_item.dart';
 import 'bottom_sheets/sort_by_fields_bottom_sheet_view.dart';
 
 class CustomListView extends StatelessWidget {
@@ -58,7 +51,7 @@ class CustomListView extends StatelessWidget {
             )
           : model.hasError
               ? handleError(
-                  error: model.error,
+                  error: model.error!,
                   context: context,
                   onRetry: () {
                     model.meta = meta;
@@ -97,9 +90,7 @@ class CustomListView extends StatelessWidget {
                             model.applyFilters(appliedFilters);
                           },
                         ),
-                        SizedBox(
-                          width: 8,
-                        ),
+                        SizedBox(width: 8),
                         SortByButton(
                           sortOrder: model.sortOrder,
                           onPressed: () async {
@@ -381,18 +372,14 @@ class AddFilterButton extends StatelessWidget {
             FrappeIcons.filter,
             color: Colors.white,
           ),
-          SizedBox(
-            width: 10,
-          ),
+          SizedBox(width: 10),
           Text(
             'Add filter',
             style: TextStyle(
               color: Colors.white,
             ),
           ),
-          SizedBox(
-            width: 10,
-          ),
+          SizedBox(width: 10),
           Container(
             width: 20,
             height: 20,
@@ -454,9 +441,7 @@ class SortByButton extends StatelessWidget {
                 : FrappeIcons.sort_ascending,
             color: Colors.white,
           ),
-          SizedBox(
-            width: 10,
-          ),
+          SizedBox(width: 10),
           ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: 100,
@@ -470,9 +455,7 @@ class SortByButton extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            width: 10,
-          ),
+          SizedBox(width: 10),
         ],
       ),
       onPressed: onPressed,

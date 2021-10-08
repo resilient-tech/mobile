@@ -1,32 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/frappe_palette.dart';
-
 import 'package:frappe_app/config/palette.dart';
-import 'package:frappe_app/form/controls/currency.dart';
-import 'package:frappe_app/form/controls/read_only.dart';
-import 'package:frappe_app/form/controls/text.dart';
 import 'package:frappe_app/model/common.dart';
-import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/widgets/custom_expansion_tile.dart';
 import 'package:frappe_app/widgets/section.dart';
-
-import '../../config/palette.dart';
-
-import './custom_table.dart';
-import './check.dart';
-import './data.dart';
-import './date.dart';
-import './datetime.dart';
-import './float.dart';
-import './int.dart';
-import './select.dart';
-import './small_text.dart';
-import './text_editor.dart';
-import './time.dart';
-import './autocomplete.dart';
-import './link_field.dart';
-import './multi_select.dart';
+import 'package:frappe_app/form/controls/controls.dart';
 
 Widget makeControl({
   required DoctypeField field,
@@ -38,205 +17,158 @@ Widget makeControl({
 
   switch (field.fieldtype) {
     case "Link":
-      {
-        control = LinkField(
-          doctypeField: field,
-          doc: doc,
-          onControlChanged: onControlChanged,
-        );
-      }
+      control = LinkField(
+        doctypeField: field,
+        doc: doc,
+        onControlChanged: onControlChanged,
+      );
       break;
 
     case "Autocomplete":
-      {
-        control = AutoComplete(
-          doctypeField: field,
-          doc: doc,
-          onControlChanged: onControlChanged,
-        );
-      }
+      control = AutoComplete(
+        doctypeField: field,
+        doc: doc,
+        onControlChanged: onControlChanged,
+      );
       break;
 
     case "Table":
-      {
-        control = CustomTable(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = CustomTable(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Select":
-      {
-        control = Select(
-          doc: doc,
-          doctypeField: field,
-          onControlChanged: onControlChanged,
-        );
-      }
+      control = Select(
+        doc: doc,
+        doctypeField: field,
+        onControlChanged: onControlChanged,
+      );
       break;
 
     case "MultiSelect":
-      {
-        control = MultiSelect(
-          doctypeField: field,
-          doc: doc,
-          onControlChanged: onControlChanged,
-        );
-      }
+      control = MultiSelect(
+        doctypeField: field,
+        doc: doc,
+        onControlChanged: onControlChanged,
+      );
       break;
 
     case "Table MultiSelect":
-      {
-        control = MultiSelect(
-          doctypeField: field,
-          doc: doc,
-          onControlChanged: onControlChanged,
-        );
-      }
+      control = MultiSelect(
+        doctypeField: field,
+        doc: doc,
+        onControlChanged: onControlChanged,
+      );
       break;
 
     case "Small Text":
-      {
-        control = SmallText(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = SmallText(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Text":
-      {
-        control = ControlText(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = ControlText(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Data":
-      {
-        control = Data(
-          doc: doc,
-          doctypeField: field,
-        );
-      }
+      control = Data(
+        doc: doc,
+        doctypeField: field,
+      );
       break;
 
     case "Read Only":
-      {
-        control = ReadOnly(
-          doc: doc,
-          doctypeField: field,
-        );
-      }
+      control = ReadOnly(
+        doc: doc,
+        doctypeField: field,
+      );
       break;
 
     case "Check":
-      {
-        control = Check(
-          doctypeField: field,
-          doc: doc,
-          onControlChanged: onControlChanged,
-        );
-      }
+      control = Check(
+        doctypeField: field,
+        doc: doc,
+        onControlChanged: onControlChanged,
+      );
       break;
 
     case "Text Editor":
-      {
-        control = TextEditor(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = TextEditor(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Datetime":
-      {
-        control = DatetimeField(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = DatetimeField(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Float":
-      {
-        control = Float(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = Float(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Currency":
-      {
-        control = Currency(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = Currency(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Int":
-      {
-        control = Int(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = Int(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Time":
-      {
-        control = Time(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = Time(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     case "Date":
-      {
-        control = Date(
-          doctypeField: field,
-          doc: doc,
-        );
-      }
+      control = Date(
+        doctypeField: field,
+        doc: doc,
+      );
       break;
 
     // case "Signature":
-    //   {
     //     control = customSignature.Signature(
     //       doc: doc,
     //       doctypeField: field,
     //     );
-    //   }
     //   break;
 
     // case "Barcode":
-    //   {
     //     control = FormBuilderBarcode(
     //       doctypeField: field,
     //       doc: doc,
     //     );
-    //   }
     //   break;
 
     default:
       control = Container();
-      break;
   }
   if (decorateControl) {
-    return buildDecoratedControl(
-      control: control,
-      field: field,
-    );
+    return buildDecoratedControl(control: control, field: field);
   } else {
-    return Padding(
-      padding: Palette.fieldPadding,
-      child: control,
-    );
+    return Padding(padding: Palette.fieldPadding, child: control);
   }
 }
 

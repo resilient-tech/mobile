@@ -1,12 +1,17 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/upload_file_response.dart';
+import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/indicator.dart';
+import 'package:frappe_app/views/form_view/bottom_sheets/reviews/add_review_bottom_sheet_view.dart';
+import 'package:frappe_app/widgets/custom_form.dart';
+import 'package:frappe_app/widgets/frappe_button.dart';
 import 'package:frappe_app/widgets/header_app_bar.dart';
 import 'package:provider/provider.dart';
-
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/config/frappe_palette.dart';
 import 'package:frappe_app/model/common.dart';
@@ -18,24 +23,12 @@ import 'package:frappe_app/views/form_view/form_view_viewmodel.dart';
 import 'package:frappe_app/widgets/collapsed_avatars.dart';
 import 'package:frappe_app/widgets/custom_expansion_tile.dart';
 import 'package:frappe_app/widgets/timeline.dart';
-
 import 'package:frappe_app/views/form_view/bottom_sheets/assignees/assignees_bottom_sheet_view.dart';
 import 'package:frappe_app/views/form_view/bottom_sheets/attachments/view_attachments_bottom_sheet_view.dart';
 import 'package:frappe_app/views/form_view/bottom_sheets/reviews/view_reviews_bottom_sheet_view.dart';
 import 'package:frappe_app/views/form_view/bottom_sheets/share/share_bottom_sheet_view.dart';
 import 'package:frappe_app/views/form_view/bottom_sheets/tags/tags_bottom_sheet_view.dart';
 import 'package:frappe_app/widgets/collapsed_reviews.dart';
-
-import '../../model/doctype_response.dart';
-import '../../config/palette.dart';
-
-import '../../utils/helpers.dart';
-import '../../utils/frappe_alert.dart';
-import '../../utils/enums.dart';
-
-import '../../widgets/custom_form.dart';
-import '../../widgets/frappe_button.dart';
-import 'bottom_sheets/reviews/add_review_bottom_sheet_view.dart';
 
 class FormView extends StatelessWidget {
   final String? name;
@@ -79,7 +72,7 @@ class FormView extends StatelessWidget {
               builder: (context) {
                 if (model.error != null) {
                   return handleError(
-                      error: model.error,
+                      error: model.error!,
                       context: context,
                       onRetry: () {
                         model.communicationOnly = true;
@@ -106,8 +99,6 @@ class FormView extends StatelessWidget {
                 } else {
                   status = docs[0]["status"];
                 }
-
-                var builderContext;
 
                 // var likedBy = docs[0]['_liked_by'] != null
                 //     ? json.decode(docs[0]['_liked_by'])
@@ -145,7 +136,6 @@ class FormView extends StatelessWidget {
                   ),
                   body: Builder(
                     builder: (context) {
-                      builderContext = context;
                       return SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
